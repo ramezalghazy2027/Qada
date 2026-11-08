@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Qada">
+<meta name="theme-color" content="#0f2a24">
+<title>Qada</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c211c; --bg2:#12302a; --card:#163a33; --card2:#1c463e; --line:#255449;
+  --text:#eef5f2; --muted:#9fbab2; --gold:#d9b46a; --gold2:#f0d79c; --green:#4fc39a; --red:#e4877a;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif}
+body{min-height:100vh;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 28px);
+  background:radial-gradient(120% 60% at 50% -10%,#1d4a40 0%,var(--bg) 60%)}
+.wrap{max-width:520px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.2px}
+h1 small{display:block;font-family:Amiri,serif;font-weight:400;color:var(--gold);font-size:16px;margin-top:2px}
+.iconbtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--text);display:grid;place-items:center;cursor:pointer}
+.iconbtn svg{width:20px;height:20px}
+.sync{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-top:4px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--green)}.dot.busy{background:var(--gold)}.dot.err{background:var(--red)}
+
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.hero{display:flex;gap:16px;align-items:center}
+.ring{position:relative;width:118px;height:118px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .pct b{font-size:26px;display:block}
+.ring .pct span{font-size:11px;color:var(--muted)}
+.stats{flex:1;display:grid;gap:10px}
+.stat{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:7px}
+.stat:last-child{border:0;padding:0}
+.stat span{color:var(--muted);font-size:13px}
+.stat b{font-size:17px}
+.stat b.gold{color:var(--gold2)}
+
+.pace{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.pace div{background:rgba(0,0,0,.18);border-radius:12px;padding:10px;text-align:center}
+.pace b{display:block;font-size:18px}
+.pace span{font-size:11px;color:var(--muted)}
+.eta{margin-top:12px;font-size:13px;color:var(--muted);text-align:center}
+.eta b{color:var(--gold2)}
+
+.sectiontitle{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:20px 4px 10px;display:flex;justify-content:space-between}
+.prayer{display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:10px}
+.prayer .info{flex:1;min-width:0}
+.prayer .name{display:flex;align-items:baseline;gap:8px;font-weight:600;font-size:16px}
+.prayer .name .ar{font-family:Amiri,serif;color:var(--gold);font-weight:400;font-size:17px}
+.pbadge{font-size:12px;font-weight:700;color:var(--gold2);background:rgba(217,180,106,.14);border-radius:8px;padding:2px 7px;margin-left:auto}
+.today-row{display:grid;grid-template-columns:72px 1fr 64px;align-items:center;gap:10px;padding:7px 0;font-size:14px}
+.today-row .bar{margin:0}
+.today-row b{text-align:right;font-size:13px}
+.today-row b.full{color:var(--green)}
+.todayhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.todayhead b{font-size:22px}
+.todayhead span{color:var(--muted);font-size:12px}
+.prayer .sub{font-size:12px;color:var(--muted);margin-top:3px}
+.bar{height:6px;background:rgba(0,0,0,.28);border-radius:4px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:4px;transition:width .4s}
+.minus{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:20px;cursor:pointer}
+.plus{min-width:64px;height:48px;border-radius:14px;border:0;background:var(--gold);color:#1b1505;font-weight:700;font-size:15px;cursor:pointer;padding:0 12px;transition:transform .1s}
+.plus:active,.minus:active,.btn:active{transform:scale(.95)}
+.plus:disabled{background:var(--card2);color:var(--muted)}
+.prayer.done .plus{background:var(--green)}
+
+.btn{width:100%;height:52px;border-radius:14px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--gold);color:#1b1505;border:0}
+.btn.ghost{background:transparent}
+.btn.danger{background:transparent;color:var(--red);border-color:#5a3a35}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+
+.chart{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:6px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.chart .col i{width:100%;background:linear-gradient(180deg,var(--gold),#a7853f);border-radius:6px 6px 3px 3px;min-height:3px}
+.chart .col.today i{background:linear-gradient(180deg,var(--green),#2f8a6a)}
+.chart .col span{font-size:10px;color:var(--muted)}
+.chart .col em{font-style:normal;font-size:10px;color:var(--text)}
+
+.log{list-style:none;padding:0;margin:0}
+.log li{display:flex;justify-content:space-between;font-size:13px;padding:9px 2px;border-bottom:1px solid var(--line)}
+.log li:last-child{border:0}
+.log li span{color:var(--muted)}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:8px}
+
+/* Sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:20}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--bg2);border-top:1px solid var(--line);
+  border-radius:22px 22px 0 0;padding:10px 18px calc(env(safe-area-inset-bottom) + 18px);transform:translateY(105%);transition:transform .25s ease;z-index:21}
+.sheet.open{transform:none}
+.scrim.open{display:block}
+.grab{width:40px;height:5px;background:var(--line);border-radius:3px;margin:4px auto 12px}
+.sheet h2{font-size:18px;margin:0 0 4px}
+.sheet p.hint{color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.45}
+.tabs{display:flex;background:rgba(0,0,0,.25);border-radius:12px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;height:36px;border:0;background:transparent;color:var(--muted);border-radius:9px;font-weight:600;cursor:pointer;font-size:13px}
+.tabs button.on{background:var(--card2);color:var(--text)}
+label.f{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+label.f .ar{font-family:Amiri,serif;color:var(--gold);margin-left:6px}
+input[type=number],input[type=date]{width:110px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:17px;text-align:center;font-family:inherit}
+input[type=date]{width:160px;font-size:15px}
+.preview{margin:14px 0;padding:12px;border-radius:12px;background:rgba(217,180,106,.1);border:1px solid rgba(217,180,106,.35);font-size:14px;text-align:center}
+.preview b{color:var(--gold2)}
+.spacer{height:12px}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 10px);transform:translate(-50%,-60px);opacity:0;background:#0a1915;border:1px solid var(--line);
+  color:var(--text);padding:10px 16px;border-radius:12px;font-size:14px;transition:all .25s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.toast button{background:none;border:0;color:var(--gold2);font-weight:700;cursor:pointer;font-size:14px}
+.welcome{text-align:center;padding:26px 16px}
+.welcome .ar{font-family:Amiri,serif;font-size:26px;color:var(--gold)}
+.welcome p{color:var(--muted);line-height:1.5;font-size:14px}
+.note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.5}
+.hidden{display:none!important}
+/* ---- one-screen layout ---- */
+html,body{height:100%}
+body{overflow:hidden;padding:calc(env(safe-area-inset-top) + 8px) 14px calc(env(safe-area-inset-bottom) + 10px)}
+.wrap{height:100%;display:flex;flex-direction:column}
+header{margin-bottom:8px;flex:none}
+h1{font-size:18px} h1 small{font-size:14px;margin:0}
+#welcome{margin:auto 0}
+#main:not(.hidden){flex:1;min-height:0;display:flex;flex-direction:column}
+#main>.card{padding:12px;margin-bottom:0;flex:none}
+.hero{gap:14px}
+.ring{width:clamp(70px,11vh,104px);height:clamp(70px,11vh,104px)}
+.ring svg{width:100%;height:100%}
+.ring .pct b{font-size:clamp(17px,2.6vh,24px)}
+.ring .pct span{font-size:10px}
+.stats{gap:6px} .stat{padding-bottom:5px} .stat b{font-size:15px} .stat span{font-size:12px}
+.pace{margin-top:10px;gap:6px} .pace div{padding:6px} .pace b{font-size:15px} .pace span{font-size:10px}
+.eta{margin-top:8px;font-size:12px}
+.sectiontitle{margin:10px 4px 6px;font-size:11px;flex:none}
+#prayers{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
+.prayer{flex:1;min-height:0;margin:0;padding:6px 10px 6px 12px;gap:10px;border-radius:14px}
+.prayer .name{font-size:15px} .prayer .name .ar{font-size:15px}
+.prayer .sub{font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{margin-top:5px;height:5px}
+.plus{height:clamp(36px,5.5vh,46px);min-width:58px}
+.minus{width:34px;height:34px}
+.actions{margin-top:8px;flex:none}
+.actions .btn{height:clamp(40px,6vh,50px);font-size:14px}
+@media (max-height:620px){.pace{display:none}.eta{margin-top:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Qada Tracker<small>قضاء الصلوات</small></h1>
+      <div class="sync"><span class="dot" id="syncDot"></span><span id="syncText">Loading…</span></div>
+    </div>
+    <button class="iconbtn" id="menuBtn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <!-- Welcome -->
+  <div id="welcome" class="card welcome hidden">
+    <div class="ar">بسم الله الرحمن الرحيم</div>
+    <h2 style="margin:12px 0 6px">Start your Qada journey</h2>
+    <p>Enter the prayers you've missed — either as a period of time (e.g. 2 years) or as exact counts for each prayer. Then tap <b>+1</b> each time you make one up.</p>
+    <button class="btn primary" id="startBtn">Enter missed prayers</button>
+  </div>
+
+  <div id="main" class="hidden">
+    <!-- Overview -->
+    <div class="card">
+      <div class="hero">
+        <div class="ring">
+          <svg width="118" height="118" viewBox="0 0 118 118">
+            <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#4fc39a"/><stop offset="1" stop-color="#d9b46a"/></linearGradient></defs>
+            <circle cx="59" cy="59" r="50" stroke="rgba(0,0,0,.3)" stroke-width="11" fill="none"/>
+            <circle id="ringArc" cx="59" cy="59" r="50" stroke="url(#g)" stroke-width="11" fill="none" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" style="transition:stroke-dashoffset .6s"/>
+          </svg>
+          <div class="pct"><div><b id="pct">0%</b><span>complete</span></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><span>Remaining</span><b class="gold" id="remaining">0</b></div>
+          <div class="stat"><span>Made up</span><b id="made">0</b></div>
+          <div class="stat"><span>Total missed</span><b id="total">0</b></div>
+        </div>
+      </div>
+      <div class="pace">
+        <div><b id="today">0</b><span>Today</span></div>
+        <div><b id="week">0</b><span>Last 7 days</span></div>
+        <div><b id="streak">0</b><span>Day streak</span></div>
+      </div>
+      <div class="eta" id="eta"></div>
+    </div>
+
+        <div class="sectiontitle"><span>Make up a prayer</span><span id="daysLeft"></span></div>
+    <div id="prayers"></div>
+
+
+    <div class="row actions">
+      <button class="btn primary" id="fullDayBtn">✓ Full day (all 5)</button>
+      <button class="btn" id="addBtn">+ Add missed</button>
+    </div>
+  </div>
+  <div class="note hidden" id="storageNote"></div>
+</div>
+
+<!-- Add sheet -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="addSheet">
+  <div class="grab"></div>
+  <h2>Add missed prayers</h2>
+  <p class="hint">These are added to what you already owe. Use “By period” if you missed every prayer for a stretch of time.</p>
+  <div class="tabs"><button data-mode="period" class="on">By period</button><button data-mode="each">Per prayer</button><button data-mode="dates">By dates</button></div>
+
+  <div data-pane="period">
+    <label class="f">Years <input type="number" inputmode="numeric" min="0" id="pY" placeholder="0"></label>
+    <label class="f">Months <input type="number" inputmode="numeric" min="0" id="pM" placeholder="0"></label>
+    <label class="f">Days <input type="number" inputmode="numeric" min="0" id="pD" placeholder="0"></label>
+  </div>
+  <div data-pane="each" class="hidden" id="eachPane"></div>
+  <div data-pane="dates" class="hidden">
+    <label class="f">From <input type="date" id="dFrom"></label>
+    <label class="f">To <input type="date" id="dTo"></label>
+  </div>
+
+  <div class="preview" id="preview">Nothing to add yet</div>
+  <div class="row"><button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="confirmAdd">Add</button></div>
+</div>
+
+<!-- Settings sheet -->
+<div class="sheet" id="setSheet">
+  <div class="grab"></div>
+  <h2>Settings</h2>
+  <p class="hint">Edit exact totals if you need to correct a number. “Owed” is the total you missed; “made up” is how many you've completed.</p>
+  <div id="editPane"></div>
+  <div class="spacer"></div>
+  <button class="btn primary" id="saveEdit">Save changes</button>
+  <div class="spacer"></div>
+  <div class="row"><button class="btn" id="backupBtn">⬆︎ Back up</button><label class="btn" style="margin:0">⬇︎ Restore<input type="file" id="restoreIn" accept=".json,application/json" hidden></label></div>
+  <p class="hint" style="margin-top:8px">Back up now and then (save to Files/iCloud) so you never lose your progress.</p>
+  <button class="btn danger" id="resetBtn">Reset everything</button>
+  <div id="resetConfirm" class="hidden" style="margin-top:10px">
+    <p class="hint" style="text-align:center">This deletes all your counts and history. Are you sure?</p>
+    <div class="row"><button class="btn ghost" id="resetNo">Keep</button><button class="btn danger" id="resetYes">Yes, reset</button></div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn ghost" data-close>Close</button>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Undo</button></div>
+
+<script>
+const PRAYERS=[
+  {k:'fajr',en:'Fajr',ar:'الفجر'},
+  {k:'dhuhr',en:'Dhuhr',ar:'الظهر'},
+  {k:'asr',en:'Asr',ar:'العصر'},
+  {k:'maghrib',en:'Maghrib',ar:'المغرب'},
+  {k:'isha',en:'Isha',ar:'العشاء'}
+];
+const $=id=>document.getElementById(id);
+const blank=()=>Object.fromEntries(PRAYERS.map(p=>[p.k,0]));
+let state=null; // {owed,done,days:{YYYY-MM-DD:n},log:[{t,k,n}],started}
+let docRef=null, mode='loading';
+const LS_KEY='qada-tracker-v1';
+
+function dayKey(d=new Date()){const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())}
+function pctStr(v){v=+v||0;return (v>=10||v===0||v>=100?Math.round(v):v.toFixed(1))+'%'}
+function fmt(n){return Number(n||0).toLocaleString()}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function normalize(s){
+  s=s&&typeof s==='object'?clone(s):{};
+  s.owed=Object.assign(blank(),s.owed||{});s.done=Object.assign(blank(),s.done||{});
+  s.days=s.days&&typeof s.days==='object'?s.days:{};s.dayP=s.dayP&&typeof s.dayP==='object'?s.dayP:{};s.goal=Math.max(1,Math.floor(+s.goal||1));s.log=Array.isArray(s.log)?s.log:[];
+  PRAYERS.forEach(p=>{s.owed[p.k]=Math.max(0,Math.floor(+s.owed[p.k]||0));s.done[p.k]=Math.max(0,Math.min(s.owed[p.k],Math.floor(+s.done[p.k]||0)))});
+  return s;
+}
+function isEmpty(s){return !s||PRAYERS.every(p=>!s.owed[p.k])}
+
+/* ---------- Sync ---------- */
+function setSync(cls,text){$('syncDot').className='dot '+cls;$('syncText').textContent=text}
+let saveTimer=null;
+function save(){
+  try{localStorage.setItem(LS_KEY,JSON.stringify(state));setSync('ok','Saved on this iPhone · works offline')}
+  catch(e){setSync('err','Could not save — storage full or blocked')}
+}
+async function init(){
+  mode='local';
+  try{state=normalize(JSON.parse(localStorage.getItem(LS_KEY)||'null'))}catch(e){state=normalize(null)}
+  setSync('ok','Saved on this iPhone · works offline');
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  render();
+}
+
+/* ---------- Actions ---------- */
+let lastAction=null;
+function pray(k,n=1){
+  const before=clone(state);
+  let applied=0;
+  const keys=k==='all'?PRAYERS.map(p=>p.k):[k];
+  keys.forEach(key=>{const room=state.owed[key]-state.done[key];const a=Math.max(-state.done[key],Math.min(room,n));state.done[key]+=a;applied+=a;
+    if(a){state.log.unshift({t:Date.now(),k:key,n:a});const dk=dayKey();const o=state.dayP[dk]=state.dayP[dk]||{};o[key]=Math.max(0,(o[key]||0)+a);}});
+  if(!applied)return;
+  const dk=dayKey();state.days[dk]=Math.max(0,(state.days[dk]||0)+applied);if(!state.days[dk])delete state.days[dk];
+  state.log=state.log.slice(0,60);
+  {const ks=Object.keys(state.dayP).sort();while(ks.length>90)delete state.dayP[ks.shift()];}
+  lastAction=before;save();render();
+  if(applied>0){
+    const name=k==='all'?'Full day':PRAYERS.find(p=>p.k===k).en;
+    toast(`${name} recorded — ${fmt(remainingTotal())} left`,true);
+    if(navigator.vibrate)try{navigator.vibrate(12)}catch(e){}
+  }else toast('Removed one',true);
+}
+function undo(){if(!lastAction)return;state=lastAction;lastAction=null;save();render();hideToast()}
+function remainingTotal(){return PRAYERS.reduce((a,p)=>a+state.owed[p.k]-state.done[p.k],0)}
+
+/* ---------- Render ---------- */
+function render(){
+  if(!state)return;
+  const empty=isEmpty(state);
+  $('welcome').classList.toggle('hidden',!empty);$('main').classList.toggle('hidden',empty);
+  if(empty)return;
+  const owed=PRAYERS.reduce((a,p)=>a+state.owed[p.k],0), done=PRAYERS.reduce((a,p)=>a+state.done[p.k],0), rem=owed-done;
+  const pct=owed?done/owed:0;
+  $('pct').textContent=(pct*100>=10||pct===0?Math.round(pct*100):(pct*100).toFixed(1))+'%';
+  $('ringArc').style.strokeDashoffset=314.16*(1-pct);
+  $('remaining').textContent=fmt(rem);$('made').textContent=fmt(done);$('total').textContent=fmt(owed);
+
+  // pace
+  const now=new Date();let week=0;const last7=[];
+  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const v=state.days[dayKey(d)]||0;week+=v;last7.push({d,v})}
+  $('today').textContent=fmt(state.days[dayKey()]||0);$('week').textContent=fmt(week);
+  let streak=0;{const d=new Date(now);if(!state.days[dayKey(d)])d.setDate(d.getDate()-1);while(state.days[dayKey(d)]>0){streak++;d.setDate(d.getDate()-1)}}
+  $('streak').textContent=streak;
+  let sum30=0;for(let i=0;i<30;i++){const d=new Date(now);d.setDate(d.getDate()-i);sum30+=state.days[dayKey(d)]||0}
+  const firstDay=Object.keys(state.days).sort()[0];
+  const span=firstDay?Math.min(30,Math.max(1,Math.round((new Date(dayKey())-new Date(firstDay))/864e5)+1)):1;
+  const avg=sum30/span;
+  if(rem===0)$('eta').innerHTML='<b>All caught up — alhamdulillah!</b>';
+  else if(avg>0){const days=Math.ceil(rem/avg);const fin=new Date(now);fin.setDate(fin.getDate()+days);
+    $('eta').innerHTML=`At your pace (${avg.toFixed(1)}/day) you'll finish around <b>${fin.toLocaleDateString(undefined,{month:'short',year:'numeric'})}</b>`;}
+  else $('eta').innerHTML='Tip: making up one extra day with each prayer clears <b>365 days a year</b>.';
+  const maxRem=Math.max(...PRAYERS.map(p=>state.owed[p.k]-state.done[p.k]));
+  $('daysLeft').textContent=maxRem?`≈ ${fmt(maxRem)} days left`:'';
+
+  // today per prayer
+  const tp=state.dayP[dayKey()]||{};
+  // prayers
+  $('prayers').innerHTML=PRAYERS.map(p=>{
+    const o=state.owed[p.k],d=state.done[p.k],r=o-d,w=o?d/o*100:0;
+    return `<div class="prayer ${o&&!r?'done':''}">
+      <div class="info"><div class="name">${p.en}<span class="ar">${p.ar}</span>${o?`<span class="pbadge">${pctStr(w)}</span>`:''}</div>
+      <div class="sub">${o?`${fmt(r)} left · ${fmt(d)} of ${fmt(o)} done · today ${fmt(tp[p.k]||0)}`:'None owed'}</div>
+      <div class="bar"><i style="width:${w}%"></i></div></div>
+      <button class="minus" data-minus="${p.k}" aria-label="Remove one ${p.en}" ${d?'':'disabled'}>−</button>
+      <button class="plus" data-plus="${p.k}" ${r?'':'disabled'}>${o&&!r?'✓':'+1'}</button></div>`}).join('');
+  $('fullDayBtn').disabled=rem===0;
+
+}
+
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-plus]');if(p)return pray(p.dataset.plus,1);
+  const m=e.target.closest('[data-minus]');if(m)return pray(m.dataset.minus,-1);
+  if(e.target.closest('[data-close]')||e.target===$('scrim'))closeSheets();
+});
+$('fullDayBtn').onclick=()=>pray('all',1);
+
+/* ---------- Toast ---------- */
+let tt;function toast(msg,withUndo){$('toastMsg').textContent=msg;$('toastUndo').style.display=withUndo?'':'none';$('toast').classList.add('show');clearTimeout(tt);tt=setTimeout(hideToast,3500)}
+function hideToast(){$('toast').classList.remove('show')}
+$('toastUndo').onclick=undo;
+
+/* ---------- Sheets ---------- */
+function openSheet(id){$('scrim').classList.add('open');$(id).classList.add('open')}
+function closeSheets(){$('scrim').classList.remove('open');document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open'));$('resetConfirm').classList.add('hidden')}
+
+let addMode='period';
+$('eachPane').innerHTML=PRAYERS.map(p=>`<label class="f"><span>${p.en}<span class="ar">${p.ar}</span></span><input type="number" inputmode="numeric" min="0" data-each="${p.k}" placeholder="0"></label>`).join('');
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{addMode=b.dataset.mode;
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('[data-pane]').forEach(p=>p.classList.toggle('hidden',p.dataset.pane!==addMode));updatePreview()});
+function toAdd(){
+  const n=v=>Math.max(0,Math.floor(+v||0));const out=blank();
+  if(addMode==='period'){const days=Math.round(n($('pY').value)*365.25+n($('pM').value)*30.44+n($('pD').value));PRAYERS.forEach(p=>out[p.k]=days)}
+  else if(addMode==='each'){document.querySelectorAll('[data-each]').forEach(i=>out[i.dataset.each]=n(i.value))}
+  else{const a=$('dFrom').value,b=$('dTo').value;if(a&&b){const days=Math.round((new Date(b)-new Date(a))/864e5)+1;if(days>0)PRAYERS.forEach(p=>out[p.k]=days)}}
+  return out;
+}
+function updatePreview(){
+  const a=toAdd(),tot=PRAYERS.reduce((s,p)=>s+a[p.k],0);
+  if(!tot){$('preview').innerHTML='Nothing to add yet';return}
+  const same=PRAYERS.every(p=>a[p.k]===a.fajr);
+  $('preview').innerHTML=same?`Adds <b>${fmt(a.fajr)}</b> of each prayer — <b>${fmt(tot)}</b> in total`:`Adds <b>${fmt(tot)}</b> prayers in total`;
+}
+document.querySelectorAll('#addSheet input').forEach(i=>i.addEventListener('input',updatePreview));
+function openAdd(){document.querySelectorAll('#addSheet input').forEach(i=>i.value='');updatePreview();openSheet('addSheet')}
+$('addBtn').onclick=openAdd;$('startBtn').onclick=openAdd;
+$('confirmAdd').onclick=()=>{
+  const a=toAdd();const tot=PRAYERS.reduce((s,p)=>s+a[p.k],0);if(!tot)return;
+  lastAction=clone(state);
+  if(!state.started)state.started=Date.now();
+  PRAYERS.forEach(p=>state.owed[p.k]+=a[p.k]);
+  save();closeSheets();render();toast(`Added ${fmt(tot)} prayers`,true);
+};
+
+/* settings */
+$('menuBtn').onclick=()=>{
+  if(!state)return;
+  $('editPane').innerHTML=`<div style="display:flex;justify-content:flex-end;gap:12px;font-size:12px;color:var(--muted);padding-right:4px"><span style="width:90px;text-align:center">Owed</span><span style="width:90px;text-align:center">Made up</span></div>`+
+   PRAYERS.map(p=>`<label class="f"><span>${p.en}</span><span style="display:flex;gap:12px"><input style="width:90px" type="number" inputmode="numeric" min="0" data-owed="${p.k}" value="${state.owed[p.k]}"><input style="width:90px" type="number" inputmode="numeric" min="0" data-done="${p.k}" value="${state.done[p.k]}"></span></label>`).join('');
+  openSheet('setSheet');
+};
+$('saveEdit').onclick=()=>{
+  lastAction=clone(state);
+  document.querySelectorAll('[data-owed]').forEach(i=>state.owed[i.dataset.owed]=Math.max(0,Math.floor(+i.value||0)));
+  document.querySelectorAll('[data-done]').forEach(i=>state.done[i.dataset.done]=Math.max(0,Math.floor(+i.value||0)));
+  state=normalize(state);save();closeSheets();render();toast('Settings updated',true);
+};
+$('resetBtn').onclick=()=>$('resetConfirm').classList.remove('hidden');
+$('resetNo').onclick=()=>$('resetConfirm').classList.add('hidden');
+$('resetYes').onclick=()=>{lastAction=clone(state);state=normalize(null);save();closeSheets();render();toast('Everything reset',true)};
+
+$('backupBtn').onclick=async()=>{
+  const name='qada-backup-'+dayKey()+'.json';
+  const blob=new Blob([JSON.stringify(state,null,1)],{type:'application/json'});
+  try{const f=new File([blob],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Qada backup'});return}}catch(e){if(e&&e.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+};
+$('restoreIn').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{const d=normalize(JSON.parse(await f.text()));if(isEmpty(d))throw 0;lastAction=clone(state);state=d;save();closeSheets();render();toast('Backup restored',true)}
+  catch(err){toast('That file isn\'t a Qada backup',false)}
+  e.target.value='';
+};
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+init();
+</script>
+</body>
+</html>
